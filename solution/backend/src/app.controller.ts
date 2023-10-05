@@ -5,7 +5,7 @@ import { InjectRepository } from "@mikro-orm/nestjs";
 
 @Controller()
 export class AppController {
-  constructor(@InjectRepository(Route) private readonly authorRepository: EntityRepository<Route>) {}
+  constructor(@InjectRepository(Route) private readonly routeRepository: EntityRepository<Route>) {}
 
   @Get()
   getHello(): string {
@@ -14,6 +14,6 @@ export class AppController {
 
   @Get("routes")
   testDb(): any {
-    return this.authorRepository.findAll();
+    return this.routeRepository.findAll();
   }
 }
