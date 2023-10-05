@@ -1,12 +1,19 @@
 import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
+import { EntityRepository } from "@mikro-orm/sqlite";
+import { Route } from "./entities/route.entity";
+import { InjectRepository } from "@mikro-orm/nestjs";
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(@InjectRepository(Route) private readonly authorRepository: EntityRepository<Route>) {}
 
   @Get()
   getHello(): string {
-    return this.appService.getHello();
+    return "test";
+  }
+
+  @Get("routes")
+  testDb(): any {
+    return this.authorRepository.findAll();
   }
 }
