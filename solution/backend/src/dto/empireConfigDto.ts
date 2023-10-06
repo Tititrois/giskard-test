@@ -10,7 +10,7 @@ export class BountiesDto {
   day: number;
 }
 
-export class EmpireDto {
+export class EmpireConfigDto {
   @IsEmail()
   countdown: string;
 
