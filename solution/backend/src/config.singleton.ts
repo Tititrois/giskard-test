@@ -1,19 +1,13 @@
 import * as fs from 'fs';
+import { MilleniumConfig } from "./configs/millenium.config";
 
 const CONFIG_FILE_NAME = 'millennium-falcon.json';
 
-// Define the shape of your Config object
-interface Config {
-  autonomy: number;
-  departure: string;
-  arrival: string;
-  routes_db: string;
-}
 
 // Singleton class to manage configuration
 export class ConfigurationManager {
   private static instance: ConfigurationManager;
-  private config: Config | null = null;
+  private config: MilleniumConfig | null = null;
 
   private constructor() {
     // Load the configuration when the instance is created
@@ -37,7 +31,7 @@ export class ConfigurationManager {
     }
   }
 
-  public getConfig(): Config | null {
+  public getConfig(): MilleniumConfig | null {
     return this.config;
   }
 }

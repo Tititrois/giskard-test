@@ -1,4 +1,4 @@
-import { IsArray, IsEmail, IsNotEmpty, IsNumber, ValidateNested } from "class-validator";
+import { IsArray, IsEmail, IsNumber, ValidateNested } from "class-validator";
 import { Type } from "class-transformer";
 
 
@@ -10,7 +10,7 @@ export class BountiesDto {
   day: number;
 }
 
-export class EmpireConfigDto {
+export class EmpireConfig {
   @IsEmail()
   countdown: string;
 

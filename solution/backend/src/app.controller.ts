@@ -2,7 +2,7 @@ import { Body, Controller, Get, Post } from "@nestjs/common";
 import { EntityRepository } from "@mikro-orm/sqlite";
 import { Route } from "./entities/route.entity";
 import { InjectRepository } from "@mikro-orm/nestjs";
-import { EmpireConfigDto } from "./dto/empireConfigDto";
+import { EmpireConfig } from "./configs/empire.config";
 
 @Controller()
 export class AppController {
@@ -14,7 +14,7 @@ export class AppController {
   }
 
   @Post()
-  calculateProbabilityWithLocalBackend(@Body() empire: EmpireConfigDto): string {
+  calculateProbabilityWithLocalBackend(@Body() empire: EmpireConfig): string {
     return "test";
   }
   //
