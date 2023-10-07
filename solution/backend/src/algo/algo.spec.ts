@@ -2,6 +2,35 @@ import { Universe } from "./algo.structures";
 import { ProbabilityCalculator } from "./algo";
 
 describe('ProbabilityCalculator', () => {
+
+  it('should throw an error when start planet is not found', () => {
+    const invalidStartPlanet = 'NonExistentStartPlanet';
+    const calculator = new ProbabilityCalculator(
+      invalidStartPlanet,
+      falconData.arrival,
+      falconData.autonomy,
+      7, // Countdown
+      [],
+      universe
+    );
+
+    expect(() => calculator.calculateProbability()).toThrow(`Start planet not found: ${invalidStartPlanet}`);
+  });
+
+  it('should throw an error when objective planet is not found', () => {
+    const invalidObjectivePlanet = 'NonExistentObjectivePlanet';
+    const calculator = new ProbabilityCalculator(
+      falconData.departure,
+      invalidObjectivePlanet,
+      falconData.autonomy,
+      7, // Countdown
+      [],
+      universe
+    );
+
+    expect(() => calculator.calculateProbability()).toThrow(`Objective planet not found: ${invalidObjectivePlanet}`);
+  });
+
   const universeData = [
     { origin: 'Tatooine', destination: 'Dagobah', travel_time: 6 },
     { origin: 'Dagobah', destination: 'Endor', travel_time: 4 },

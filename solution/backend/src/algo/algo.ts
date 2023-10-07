@@ -23,13 +23,13 @@ export class ProbabilityCalculator {
     // get start planet, throw error is not found
     const startPlanet = this.universe.getPlanet(this.startNodeName);
     if (startPlanet === undefined) {
-      throw new Error("Start planet not found");
+      throw new Error(`Start planet not found: ${this.startNodeName}`);
     }
 
     // get end node, throw error is not found
     const objectivePlanet = this.universe.getPlanet(this.objectiveNodeName);
     if (objectivePlanet === undefined) {
-      throw new Error("Objective planet not found");
+      throw new Error(`Objective planet not found: ${this.objectiveNodeName}`);
     }
 
     const ongoingPaths: Array<Path> = [new Path(startPlanet, this.milleniumAutonomy)];
