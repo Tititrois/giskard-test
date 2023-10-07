@@ -1,9 +1,9 @@
-import { IsArray, IsEmail, IsNumber, ValidateNested } from "class-validator";
+import { IsArray, IsEmail, IsNumber, IsString, ValidateNested } from "class-validator";
 import { Type } from "class-transformer";
 
 
-export class BountiesDto {
-  @IsEmail()
+export class Bounty {
+  @IsString()
   planet: string;
 
   @IsNumber()
@@ -11,11 +11,11 @@ export class BountiesDto {
 }
 
 export class EmpireConfig {
-  @IsEmail()
-  countdown: string;
+  @IsNumber()
+  countdown: number;
 
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => BountiesDto)
-  bounty_hunters: Array<BountiesDto>;
+  @Type(() => Bounty)
+  bounty_hunters: Array<Bounty>;
 }

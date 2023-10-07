@@ -10,7 +10,7 @@ export class Route extends BaseEntity {
   destination: string;
 
   @Property()
-  travel_time: string;
+  travel_time: number;
 
   constructor() {
     super();
