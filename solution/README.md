@@ -1,5 +1,12 @@
-# Installation
+# Notes
 
+It took me quite long, so I had not time to do some enhancement that could have been nice
+- A docker compose to run the project
+- Some tests iun the frontend
+
+If you struggle to run the project, please let me know
+
+# Installation
 
 ## Requirement
 
@@ -81,6 +88,7 @@ Replace path/to/millennium-falcon.json and path/to/empire.json with the paths to
     ```bash
     ng serve --open
 
+You can navigate now to `localost:4300`, upload any config and run the calculations
 
 ![img.png](img.png)
 
@@ -105,6 +113,8 @@ Singleton Config managed
 **Solution Design**
 
 Each routes in the app.controller.ts are calling a service AppService.ts. They are loading then a class to do all the Algo logic.
+
+**You can find a class of test (I used TDD here for the algo part) at the following file:** `src/algo/probability.calculator.spec.ts`
 
 ### Algo solution
 
