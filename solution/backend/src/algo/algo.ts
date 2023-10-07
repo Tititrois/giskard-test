@@ -37,6 +37,8 @@ export class ProbabilityCalculator {
 
     while (ongoingPaths.length > 0) {
       for (const path of ongoingPaths) {
+
+        const newPaths = [];
         // Do all possible actions (rest, refuel, travel). Rest and refules as value 0
 
         // If action TravelToPlanet, check if we have enough autonomy to travel
@@ -46,6 +48,10 @@ export class ProbabilityCalculator {
         // if autonomy too long, do not add the travel to the path
         // if not any ongoing path, remove the path from the list
 
+
+        if (newPaths.length === 0) {
+          ongoingPaths.splice(ongoingPaths.indexOf(path), 1);
+        }
       }
     }
 
