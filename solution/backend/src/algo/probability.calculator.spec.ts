@@ -19,8 +19,8 @@ describe('ProbabilityCalculator', () => {
   it('should throw an error when start planet is not found', () => {
     const invalidStartPlanet = 'NonExistentStartPlanet';
     const calculator = new ProbabilityCalculator({
-      startNodeName: invalidStartPlanet,
-      objectiveNodeName: falconData.arrival,
+      startPlanet: invalidStartPlanet,
+      destinationPlanet: falconData.arrival,
       milleniumAutonomy: falconData.autonomy,
       empireCountdown: 7,
       bounties: [],
@@ -33,8 +33,8 @@ describe('ProbabilityCalculator', () => {
   it('should throw an error when objective planet is not found', () => {
     const invalidObjectivePlanet = 'NonExistentObjectivePlanet';
     const calculator = new ProbabilityCalculator({
-      startNodeName: falconData.departure,
-      objectiveNodeName: invalidObjectivePlanet,
+      startPlanet: falconData.departure,
+      destinationPlanet: invalidObjectivePlanet,
       milleniumAutonomy: falconData.autonomy,
       empireCountdown: 7,
       bounties: [],
@@ -55,8 +55,8 @@ describe('ProbabilityCalculator', () => {
     };
 
     const calculator = new ProbabilityCalculator({
-      startNodeName: falconData.departure,
-      objectiveNodeName: falconData.arrival,
+      startPlanet: falconData.departure,
+      destinationPlanet: falconData.arrival,
       milleniumAutonomy: falconData.autonomy,
       empireCountdown: empireData.countdown,
       bounties: empireData.bounty_hunters,
@@ -78,8 +78,8 @@ describe('ProbabilityCalculator', () => {
     };
 
     const calculator = new ProbabilityCalculator({
-      startNodeName: falconData.departure,
-      objectiveNodeName: falconData.arrival,
+      startPlanet: falconData.departure,
+      destinationPlanet: falconData.arrival,
       milleniumAutonomy: falconData.autonomy,
       empireCountdown: empireData.countdown,
       bounties: empireData.bounty_hunters,
@@ -101,8 +101,8 @@ describe('ProbabilityCalculator', () => {
     };
 
     const calculator = new ProbabilityCalculator({
-      startNodeName: falconData.departure,
-      objectiveNodeName: falconData.arrival,
+      startPlanet: falconData.departure,
+      destinationPlanet: falconData.arrival,
       milleniumAutonomy: falconData.autonomy,
       empireCountdown: empireData.countdown,
       bounties: empireData.bounty_hunters,
@@ -124,8 +124,8 @@ describe('ProbabilityCalculator', () => {
     };
 
     const calculator = new ProbabilityCalculator({
-      startNodeName: falconData.departure,
-      objectiveNodeName: falconData.arrival,
+      startPlanet: falconData.departure,
+      destinationPlanet: falconData.arrival,
       milleniumAutonomy: falconData.autonomy,
       empireCountdown: empireData.countdown,
       bounties: empireData.bounty_hunters,

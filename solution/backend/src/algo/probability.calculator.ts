@@ -3,8 +3,8 @@ import { ActionEnum, Travel, Planet, Universe, Action } from "./calculator.struc
 import { Route } from "../entities/route.entity";
 
 export interface ProbabilityCalculatorInterface {
-  startNodeName: string,
-  objectiveNodeName: string,
+  startPlanet: string,
+  destinationPlanet: string,
   milleniumAutonomy: number,
   empireCountdown: number,
   bounties: Array<Bounty>,
@@ -12,16 +12,16 @@ export interface ProbabilityCalculatorInterface {
 }
 
 export class ProbabilityCalculator {
-  public startNodeName: string;
-  public objectiveNodeName: string;
+  public startPlanet: string;
+  public destinationPlanet: string;
   public milleniumAutonomy: number;
   public empireCountdown: number;
   public bounties: Array<Bounty>
   public universe: Universe;
 
   public constructor(input: ProbabilityCalculatorInterface) {
-    this.startNodeName = input.startNodeName;
-    this.objectiveNodeName = input.objectiveNodeName;
+    this.startPlanet = input.startPlanet;
+    this.destinationPlanet = input.destinationPlanet;
     this.milleniumAutonomy = input.milleniumAutonomy;
     this.empireCountdown = input.empireCountdown;
     this.bounties = input.bounties;
@@ -125,15 +125,15 @@ export class ProbabilityCalculator {
 
   private checkAndGetStartAndObjectivePlanets(): [startPlanet: Planet, objectivePlanet: Planet] {
     // get start planet, throw error is not found
-    const startPlanet = this.universe.getPlanet(this.startNodeName);
+    const startPlanet = this.universe.getPlanet(this.startPlanet);
     if (startPlanet === undefined) {
-      throw new Error(`Start planet not found: ${this.startNodeName}`);
+      throw new Error(`Start planet not found: ${this.startPlanet}`);
     }
 
     // get end node, throw error is not found
-    const objectivePlanet = this.universe.getPlanet(this.objectiveNodeName);
+    const objectivePlanet = this.universe.getPlanet(this.destinationPlanet);
     if (objectivePlanet === undefined) {
-      throw new Error(`Objective planet not found: ${this.objectiveNodeName}`);
+      throw new Error(`Objective planet not found: ${this.destinationPlanet}`);
     }
 
     return [startPlanet, objectivePlanet];
