@@ -19,7 +19,7 @@ export class Travel {
   public fuelAutonomy: number = 0;
   public currentDay: number = 0;
 
-  public paths: Array<{ action: ActionEnum, planet: Planet, countdown?: number }> = []
+  public paths: Array<{ action: ActionEnum, planet: Planet }> = []
   public nbRiskedOccurrence: number = 0;
 
   public constructor(currentPlanet: Planet, fuelAutonomy: number) {

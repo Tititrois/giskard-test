@@ -2,6 +2,14 @@ import { Bounty } from "../configs/empire.config";
 import { ActionEnum, Travel, Planet, Universe, Action } from "./calculator.structures";
 import { Route } from "../entities/route.entity";
 
+export interface ProbabilityCalculatorInterface {
+  startNodeName: string,
+  objectiveNodeName: string,
+  milleniumAutonomy: number,
+  empireCountdown: number,
+  bounties: Array<Bounty>,
+  routes: Array<Route>,
+}
 
 export class ProbabilityCalculator {
   public startNodeName: string;
@@ -11,13 +19,13 @@ export class ProbabilityCalculator {
   public bounties: Array<Bounty>
   public universe: Universe;
 
-  public constructor(startNodeName: string, objectiveNodeName: string, milleniumAutonomy: number, empireCountdown: number, bounties: Array<Bounty>, routes: Array<Route>) {
-    this.startNodeName = startNodeName;
-    this.objectiveNodeName = objectiveNodeName;
-    this.milleniumAutonomy = milleniumAutonomy;
-    this.empireCountdown = empireCountdown;
-    this.bounties = bounties;
-    this.universe = new Universe(routes);
+  public constructor(input: ProbabilityCalculatorInterface) {
+    this.startNodeName = input.startNodeName;
+    this.objectiveNodeName = input.objectiveNodeName;
+    this.milleniumAutonomy = input.milleniumAutonomy;
+    this.empireCountdown = input.empireCountdown;
+    this.bounties = input.bounties;
+    this.universe = new Universe(input.routes);
   }
 
   public calculateProbability(): number {
@@ -145,9 +153,8 @@ export class ProbabilityCalculator {
   }
 
   private updateTravel(currentTravel: Travel, action: Action): Travel {
-    const updatedTravel = new Travel(action.toPlanet, action.fuelAfterAction);
-    updatedTravel.currentDay = action.countDownAfterAction;
-    updatedTravel.paths = [...currentTravel.paths, {action: action.action, planet: action.toPlanet, countdown: action.countDownAfterAction}];
+    const updatedTravel = new Travel(action.toPlanet, this.milleniumAutonomy);
+    updatedTravel.paths = [...currentTravel.paths, {action: action.action, planet: action.toPlanet }];
     updatedTravel.currentDay = action.countDownAfterAction;
     updatedTravel.nbRiskedOccurrence = currentTravel.nbRiskedOccurrence;
     updatedTravel.currentFuel = action.fuelAfterAction;

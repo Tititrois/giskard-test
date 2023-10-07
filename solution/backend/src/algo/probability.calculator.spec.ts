@@ -1,36 +1,6 @@
-import { Universe } from "./calculator.structures";
 import { ProbabilityCalculator } from "./probability.calculator";
 
 describe('ProbabilityCalculator', () => {
-
-  it('should throw an error when start planet is not found', () => {
-    const invalidStartPlanet = 'NonExistentStartPlanet';
-    const calculator = new ProbabilityCalculator(
-      invalidStartPlanet,
-      falconData.arrival,
-      falconData.autonomy,
-      7, // Countdown
-      [],
-      routes
-    );
-
-    expect(() => calculator.calculateProbability()).toThrow(`Start planet not found: ${invalidStartPlanet}`);
-  });
-
-  it('should throw an error when objective planet is not found', () => {
-    const invalidObjectivePlanet = 'NonExistentObjectivePlanet';
-    const calculator = new ProbabilityCalculator(
-      falconData.departure,
-      invalidObjectivePlanet,
-      falconData.autonomy,
-      7, // Countdown
-      [],
-      routes
-    );
-
-    expect(() => calculator.calculateProbability()).toThrow(`Objective planet not found: ${invalidObjectivePlanet}`);
-  });
-
   const routes = [
     { origin: 'Tatooine', destination: 'Dagobah', travel_time: 6 },
     { origin: 'Dagobah', destination: 'Endor', travel_time: 4 },
@@ -46,6 +16,34 @@ describe('ProbabilityCalculator', () => {
     routes_db: 'universe.db',
   };
 
+  it('should throw an error when start planet is not found', () => {
+    const invalidStartPlanet = 'NonExistentStartPlanet';
+    const calculator = new ProbabilityCalculator({
+      startNodeName: invalidStartPlanet,
+      objectiveNodeName: falconData.arrival,
+      milleniumAutonomy: falconData.autonomy,
+      empireCountdown: 7,
+      bounties: [],
+      routes: routes,
+    });
+
+    expect(() => calculator.calculateProbability()).toThrow(`Start planet not found: ${invalidStartPlanet}`);
+  });
+
+  it('should throw an error when objective planet is not found', () => {
+    const invalidObjectivePlanet = 'NonExistentObjectivePlanet';
+    const calculator = new ProbabilityCalculator({
+      startNodeName: falconData.departure,
+      objectiveNodeName: invalidObjectivePlanet,
+      milleniumAutonomy: falconData.autonomy,
+      empireCountdown: 7,
+      bounties: [],
+      routes: routes,
+    });
+
+    expect(() => calculator.calculateProbability()).toThrow(`Objective planet not found: ${invalidObjectivePlanet}`);
+  });
+
   it('Scenario 1: should display 0% probability', () => {
     const empireData = {
       countdown: 7,
@@ -56,14 +54,14 @@ describe('ProbabilityCalculator', () => {
       ],
     };
 
-    const calculator = new ProbabilityCalculator(
-      falconData.departure,
-      falconData.arrival,
-      falconData.autonomy,
-      empireData.countdown,
-      empireData.bounty_hunters,
-      routes
-    );
+    const calculator = new ProbabilityCalculator({
+      startNodeName: falconData.departure,
+      objectiveNodeName: falconData.arrival,
+      milleniumAutonomy: falconData.autonomy,
+      empireCountdown: empireData.countdown,
+      bounties: empireData.bounty_hunters,
+      routes: routes,
+    });
 
     const probability = calculator.calculateProbability();
     expect(probability).toBe(0);
@@ -79,14 +77,14 @@ describe('ProbabilityCalculator', () => {
       ],
     };
 
-    const calculator = new ProbabilityCalculator(
-      falconData.departure,
-      falconData.arrival,
-      falconData.autonomy,
-      empireData.countdown,
-      empireData.bounty_hunters,
-      routes
-    );
+    const calculator = new ProbabilityCalculator({
+      startNodeName: falconData.departure,
+      objectiveNodeName: falconData.arrival,
+      milleniumAutonomy: falconData.autonomy,
+      empireCountdown: empireData.countdown,
+      bounties: empireData.bounty_hunters,
+      routes: routes,
+    });
 
     const probability = calculator.calculateProbability();
     expect(probability).toBe(81);
@@ -102,14 +100,14 @@ describe('ProbabilityCalculator', () => {
       ],
     };
 
-    const calculator = new ProbabilityCalculator(
-      falconData.departure,
-      falconData.arrival,
-      falconData.autonomy,
-      empireData.countdown,
-      empireData.bounty_hunters,
-      routes
-    );
+    const calculator = new ProbabilityCalculator({
+      startNodeName: falconData.departure,
+      objectiveNodeName: falconData.arrival,
+      milleniumAutonomy: falconData.autonomy,
+      empireCountdown: empireData.countdown,
+      bounties: empireData.bounty_hunters,
+      routes: routes,
+    });
 
     const probability = calculator.calculateProbability();
     expect(probability).toBe(90);
@@ -125,14 +123,14 @@ describe('ProbabilityCalculator', () => {
       ],
     };
 
-    const calculator = new ProbabilityCalculator(
-      falconData.departure,
-      falconData.arrival,
-      falconData.autonomy,
-      empireData.countdown,
-      empireData.bounty_hunters,
-      routes
-    );
+    const calculator = new ProbabilityCalculator({
+      startNodeName: falconData.departure,
+      objectiveNodeName: falconData.arrival,
+      milleniumAutonomy: falconData.autonomy,
+      empireCountdown: empireData.countdown,
+      bounties: empireData.bounty_hunters,
+      routes: routes,
+    });
 
     const probability = calculator.calculateProbability();
     expect(probability).toBe(100);
