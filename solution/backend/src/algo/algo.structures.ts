@@ -1,22 +1,43 @@
 import { Route } from "../entities/route.entity";
 
-export enum Action {
-  Rest= "Rest",
+export enum ActionEnum {
+  Rest = "Rest",
   Refuel = "Refuel",
   TravelToPlanet = "TravelToPlanet",
 }
 
-export class Path {
+export interface Action {
+  action: ActionEnum;
+  toPlanet: Planet;
+  fuelAfterAction: number;
+  countDownAfterAction: number
+}
+
+export class Travel {
   public currentPlanet: Planet;
   public currentFuel: number = 0;
+  public fuelAutonomy: number = 0;
   public currentDay: number = 0;
 
-  public list: Array<{ action: Action, planet: Planet, countdown?: number }> = []
+  public paths: Array<{ action: ActionEnum, planet: Planet, countdown?: number }> = []
   public nbRiskedOccurrence: number = 0;
 
-  public constructor(currentPlanet: Planet, currentFuel: number) {
+  public constructor(currentPlanet: Planet, fuelAutonomy: number) {
     this.currentPlanet = currentPlanet;
-    this.currentFuel = currentFuel;
+    this.fuelAutonomy = fuelAutonomy;
+    this.currentFuel = fuelAutonomy;
+  }
+
+  public isTravelWithinCountdown(empireCountdown: number): boolean {
+    return this.currentDay <= empireCountdown;
+  }
+
+  public isTravelReachedDestination(destinationPlanet: Planet): boolean {
+    return this.currentPlanet === destinationPlanet;
+  }
+
+  public isFuelFull(): boolean {
+    return this.currentFuel === this.fuelAutonomy;
   }
 }
 
@@ -43,5 +64,6 @@ export class Universe {
 }
 
 export class Planet {
-  constructor(public name: string, public children: Array<{ planet: Planet; travelTime: number}>) {}
+  constructor(public name: string, public children: Array<{ planet: Planet; travelTime: number }>) {
+  }
 }

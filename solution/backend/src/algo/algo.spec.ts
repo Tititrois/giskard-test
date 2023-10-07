@@ -11,7 +11,7 @@ describe('ProbabilityCalculator', () => {
       falconData.autonomy,
       7, // Countdown
       [],
-      universe
+      routes
     );
 
     expect(() => calculator.calculateProbability()).toThrow(`Start planet not found: ${invalidStartPlanet}`);
@@ -25,21 +25,19 @@ describe('ProbabilityCalculator', () => {
       falconData.autonomy,
       7, // Countdown
       [],
-      universe
+      routes
     );
 
     expect(() => calculator.calculateProbability()).toThrow(`Objective planet not found: ${invalidObjectivePlanet}`);
   });
 
-  const universeData = [
+  const routes = [
     { origin: 'Tatooine', destination: 'Dagobah', travel_time: 6 },
     { origin: 'Dagobah', destination: 'Endor', travel_time: 4 },
     { origin: 'Dagobah', destination: 'Hoth', travel_time: 1 },
     { origin: 'Hoth', destination: 'Endor', travel_time: 1 },
     { origin: 'Tatooine', destination: 'Hoth', travel_time: 6 },
   ];
-
-  const universe = new Universe(universeData);
 
   const falconData = {
     autonomy: 6,
@@ -64,7 +62,7 @@ describe('ProbabilityCalculator', () => {
       falconData.autonomy,
       empireData.countdown,
       empireData.bounty_hunters,
-      universe
+      routes
     );
 
     const probability = calculator.calculateProbability();
@@ -87,7 +85,7 @@ describe('ProbabilityCalculator', () => {
       falconData.autonomy,
       empireData.countdown,
       empireData.bounty_hunters,
-      universe
+      routes
     );
 
     const probability = calculator.calculateProbability();
@@ -110,7 +108,7 @@ describe('ProbabilityCalculator', () => {
       falconData.autonomy,
       empireData.countdown,
       empireData.bounty_hunters,
-      universe
+      routes
     );
 
     const probability = calculator.calculateProbability();
@@ -133,7 +131,7 @@ describe('ProbabilityCalculator', () => {
       falconData.autonomy,
       empireData.countdown,
       empireData.bounty_hunters,
-      universe
+      routes
     );
 
     const probability = calculator.calculateProbability();

@@ -1,6 +1,6 @@
 import { Bounty } from "../configs/empire.config";
-import { Action, Path, Planet, Universe } from "./algo.structures";
-import { Min } from "class-validator";
+import { ActionEnum, Travel, Planet, Universe, Action } from "./algo.structures";
+import { Route } from "../entities/route.entity";
 
 
 export class ProbabilityCalculator {
@@ -11,97 +11,79 @@ export class ProbabilityCalculator {
   public bounties: Array<Bounty>
   public universe: Universe;
 
-  public constructor(startNodeName: string, objectiveNodeName: string, milleniumAutonomy: number, empireCountdown: number, bounties: Array<Bounty>, universe: Universe) {
+  public constructor(startNodeName: string, objectiveNodeName: string, milleniumAutonomy: number, empireCountdown: number, bounties: Array<Bounty>, routes: Array<Route>) {
     this.startNodeName = startNodeName;
     this.objectiveNodeName = objectiveNodeName;
     this.milleniumAutonomy = milleniumAutonomy;
     this.empireCountdown = empireCountdown;
     this.bounties = bounties;
-    this.universe = universe;
+    this.universe = new Universe(routes);
   }
 
   public calculateProbability(): number {
-    // get start planet, throw error is not found
-    const startPlanet = this.universe.getPlanet(this.startNodeName);
-    if (startPlanet === undefined) {
-      throw new Error(`Start planet not found: ${this.startNodeName}`);
-    }
+    const [startPlanet, objectivePlanet] = this.checkAndGetStartAndObjectivePlanets();
 
-    // get end node, throw error is not found
-    const objectivePlanet = this.universe.getPlanet(this.objectiveNodeName);
-    if (objectivePlanet === undefined) {
-      throw new Error(`Objective planet not found: ${this.objectiveNodeName}`);
-    }
+    let ongoingTravels: Array<Travel> = [new Travel(startPlanet, this.milleniumAutonomy)];
+    const validTravels: Array<Travel> = [];
 
-    let ongoingPaths: Array<Path> = [new Path(startPlanet, this.milleniumAutonomy)];
-    const validPaths: Array<Path> = [];
+    let isTravelToExplore = ongoingTravels.length > 0;
 
-    while (ongoingPaths.length > 0) {
-      const newOngoingPaths: Array<Path> = [];
+    while (isTravelToExplore) {
+      const newOngoingTravels: Array<Travel> = [];
 
-      for (const path of ongoingPaths) {
-        const possibleActions = this.getPossibleActions(path);
+      for (const ongoingTravel of ongoingTravels) {
+        const possibleActions = this.getPossibleActions(ongoingTravel);
 
         for (const possibleAction of possibleActions) {
+          const updatedTravel = this.updateTravel(ongoingTravel, possibleAction);
 
-          // create new path
-          const newPath = new Path(possibleAction.toPlanet, possibleAction.fuelAfterAction);
-          newPath.currentDay = possibleAction.countDownAfterAction;
-          newPath.list = [...path.list, {action: possibleAction.action, planet: possibleAction.toPlanet, countdown: possibleAction.countDownAfterAction }];
-          newPath.currentDay = possibleAction.countDownAfterAction;
-          newPath.nbRiskedOccurrence = path.nbRiskedOccurrence;
+          this.updateTravelRisk(updatedTravel);
 
-          const isActionAtRisked = this.bounties.some((bounty) => bounty.day === newPath.currentDay && bounty.planet === newPath.currentPlanet.name);
-          if (isActionAtRisked) {
-            newPath.nbRiskedOccurrence++;
-          }
-
-          if (newPath.currentDay <= this.empireCountdown) {
-            if (possibleAction.toPlanet === objectivePlanet) {
-              validPaths.push(newPath);
+          if (updatedTravel.isTravelWithinCountdown(this.empireCountdown)) {
+            if (updatedTravel.isTravelReachedDestination(objectivePlanet)) {
+              validTravels.push(updatedTravel);
             } else {
-              newOngoingPaths.push(newPath);
+              newOngoingTravels.push(updatedTravel);
             }
           }
         }
       }
 
-      ongoingPaths = newOngoingPaths;
+      ongoingTravels = newOngoingTravels;
+      isTravelToExplore = ongoingTravels.length > 0;
     }
 
-    // return valid path with lowest risked occurrence
-    if (validPaths.length > 0) {
-      const safestPath = validPaths.reduce((previousPath, currentPath) => {
-        return previousPath.nbRiskedOccurrence < currentPath.nbRiskedOccurrence ? previousPath : currentPath
-      });
-      return this.calculateProbabilityWithBounties(safestPath.nbRiskedOccurrence);
+    const isAnyValidTravel = validTravels.length > 0;
+    if (isAnyValidTravel) {
+      const safestTravel = this.safestTravel(validTravels);
+      return this.calculateProbabilityWithBounties(safestTravel.nbRiskedOccurrence);
     }
 
     return 0;
   }
 
-  private getPossibleActions(path: Path): Array<{ action: Action; toPlanet: Planet; fuelAfterAction: number; countDownAfterAction: number }> {
-    const possibleActions: Array<{ action: Action; toPlanet: Planet; fuelAfterAction: number; countDownAfterAction: number }> = [];
+  private getPossibleActions(travel: Travel): Array<Action> {
+    const possibleActions: Array<Action> = [];
 
-    if (path.currentFuel === this.milleniumAutonomy) {
-      possibleActions.push({action: Action.Rest, toPlanet: path.currentPlanet, fuelAfterAction: path.currentFuel, countDownAfterAction: path.currentDay + 1});
+    if (travel.isFuelFull()) {
+      possibleActions.push({action: ActionEnum.Rest, toPlanet: travel.currentPlanet, fuelAfterAction: travel.currentFuel, countDownAfterAction: travel.currentDay + 1});
     } else {
       possibleActions.push({
-        action: Action.Refuel,
-        toPlanet: path.currentPlanet,
+        action: ActionEnum.Refuel,
+        toPlanet: travel.currentPlanet,
         fuelAfterAction: this.milleniumAutonomy,
-        countDownAfterAction: path.currentDay + 1,
+        countDownAfterAction: travel.currentDay + 1,
       });
-      possibleActions.push({action: Action.Rest, toPlanet: path.currentPlanet, fuelAfterAction: path.currentFuel, countDownAfterAction: path.currentDay + 1});
+      possibleActions.push({action: ActionEnum.Rest, toPlanet: travel.currentPlanet, fuelAfterAction: travel.currentFuel, countDownAfterAction: travel.currentDay + 1});
     }
 
-    path.currentPlanet.children.forEach((child) => {
-      if (child.travelTime <= path.currentFuel) {
+    travel.currentPlanet.children.forEach((child) => {
+      if (child.travelTime <= travel.currentFuel) {
         possibleActions.push({
-          action: Action.TravelToPlanet,
+          action: ActionEnum.TravelToPlanet,
           toPlanet: child.planet,
-          fuelAfterAction: path.currentFuel - child.travelTime,
-          countDownAfterAction: path.currentDay + child.travelTime,
+          fuelAfterAction: travel.currentFuel - child.travelTime,
+          countDownAfterAction: travel.currentDay + child.travelTime,
         })
       }
     });
@@ -121,6 +103,45 @@ export class ProbabilityCalculator {
     }
 
     return (1 - probability) * 100;
+  }
+
+  private checkAndGetStartAndObjectivePlanets(): [startPlanet: Planet, objectivePlanet: Planet] {
+    // get start planet, throw error is not found
+    const startPlanet = this.universe.getPlanet(this.startNodeName);
+    if (startPlanet === undefined) {
+      throw new Error(`Start planet not found: ${this.startNodeName}`);
+    }
+
+    // get end node, throw error is not found
+    const objectivePlanet = this.universe.getPlanet(this.objectiveNodeName);
+    if (objectivePlanet === undefined) {
+      throw new Error(`Objective planet not found: ${this.objectiveNodeName}`);
+    }
+
+    return [startPlanet, objectivePlanet];
+  }
+
+  private updateTravelRisk(travel: Travel): void {
+    const isBountyAtCurrentPlanet = this.bounties.some((bounty) => bounty.day === travel.currentDay && bounty.planet === travel.currentPlanet.name);
+    if (isBountyAtCurrentPlanet) {
+      travel.nbRiskedOccurrence++;
+    }
+  }
+
+  private safestTravel(travels: Array<Travel>): Travel {
+    return travels.reduce((previousTravel, currentTravel) => {
+      return previousTravel.nbRiskedOccurrence < currentTravel.nbRiskedOccurrence ? previousTravel : currentTravel
+    });
+  }
+
+  private updateTravel(currentTravel: Travel, action: Action): Travel {
+    const updatedTravel = new Travel(action.toPlanet, action.fuelAfterAction);
+    updatedTravel.currentDay = action.countDownAfterAction;
+    updatedTravel.paths = [...currentTravel.paths, {action: action.action, planet: action.toPlanet, countdown: action.countDownAfterAction }];
+    updatedTravel.currentDay = action.countDownAfterAction;
+    updatedTravel.nbRiskedOccurrence = currentTravel.nbRiskedOccurrence;
+    updatedTravel.currentFuel = action.fuelAfterAction;
+    return updatedTravel;
   }
 }
 

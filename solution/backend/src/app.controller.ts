@@ -17,9 +17,4 @@ export class AppController {
   calculateProbabilityWithLocalBackend(@Body() empire: EmpireConfig): string {
     return "test";
   }
-  //
-  // @Get()
-  // runFromNewConfig(): string {
-  //   return "test";
-  // }
 }
