@@ -1,5 +1,5 @@
-import { Universe } from "./algo.structures";
-import { ProbabilityCalculator } from "./algo";
+import { Universe } from "./calculator.structures";
+import { ProbabilityCalculator } from "./probability.calculator";
 
 describe('ProbabilityCalculator', () => {
 
