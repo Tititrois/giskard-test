@@ -1,16 +1,18 @@
 import { Route } from "../entities/route.entity";
 
 export enum Action {
-  Rest,
-  Refuel,
-  TravelToPlanet
+  Rest= "Rest",
+  Refuel = "Refuel",
+  TravelToPlanet = "TravelToPlanet",
 }
 
 export class Path {
   public currentPlanet: Planet;
-  public list: Array<{ action: Action, planet: Planet }> = []
-  public nbRiskedOccurrence: number = 0;
   public currentFuel: number = 0;
+  public currentDay: number = 0;
+
+  public list: Array<{ action: Action, planet: Planet, countdown?: number }> = []
+  public nbRiskedOccurrence: number = 0;
 
   public constructor(currentPlanet: Planet, currentFuel: number) {
     this.currentPlanet = currentPlanet;
@@ -31,7 +33,7 @@ export class Universe {
       if (!this.planets.has(route.destination)) {
         this.planets.set(route.destination, new Planet(route.destination, []));
       }
-      this.planets.get(route.origin)?.children.push({node: this.planets.get(route.destination)!, travelTime: route.travel_time});
+      this.planets.get(route.origin)?.children.push({planet: this.planets.get(route.destination)!, travelTime: route.travel_time});
     }
   }
 
@@ -41,5 +43,5 @@ export class Universe {
 }
 
 export class Planet {
-  constructor(public name: string, public children: Array<{ node: Planet; travelTime: number}>) {}
+  constructor(public name: string, public children: Array<{ planet: Planet; travelTime: number}>) {}
 }

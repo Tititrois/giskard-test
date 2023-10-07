@@ -1,5 +1,6 @@
 import { Bounty } from "../configs/empire.config";
-import { Path, Universe } from "./algo.structures";
+import { Action, Path, Planet, Universe } from "./algo.structures";
+import { Min } from "class-validator";
 
 
 export class ProbabilityCalculator {
@@ -32,30 +33,94 @@ export class ProbabilityCalculator {
       throw new Error(`Objective planet not found: ${this.objectiveNodeName}`);
     }
 
-    const ongoingPaths: Array<Path> = [new Path(startPlanet, this.milleniumAutonomy)];
+    let ongoingPaths: Array<Path> = [new Path(startPlanet, this.milleniumAutonomy)];
     const validPaths: Array<Path> = [];
 
     while (ongoingPaths.length > 0) {
+      const newOngoingPaths: Array<Path> = [];
+
       for (const path of ongoingPaths) {
+        const possibleActions = this.getPossibleActions(path);
 
-        const newPaths = [];
-        // Do all possible actions (rest, refuel, travel). Rest and refules as value 0
+        for (const possibleAction of possibleActions) {
 
-        // If action TravelToPlanet, check if we have enough autonomy to travel
-        // If we have enough autonomy, add the travel to the path
-        // check if bounty is on the planet
-        // if yes, add one to the nbRiskedOccurrence
-        // if autonomy too long, do not add the travel to the path
-        // if not any ongoing path, remove the path from the list
+          // create new path
+          const newPath = new Path(possibleAction.toPlanet, possibleAction.fuelAfterAction);
+          newPath.currentDay = possibleAction.countDownAfterAction;
+          newPath.list = [...path.list, {action: possibleAction.action, planet: possibleAction.toPlanet, countdown: possibleAction.countDownAfterAction }];
+          newPath.currentDay = possibleAction.countDownAfterAction;
+          newPath.nbRiskedOccurrence = path.nbRiskedOccurrence;
 
+          const isActionAtRisked = this.bounties.some((bounty) => bounty.day === newPath.currentDay && bounty.planet === newPath.currentPlanet.name);
+          if (isActionAtRisked) {
+            newPath.nbRiskedOccurrence++;
+          }
 
-        if (newPaths.length === 0) {
-          ongoingPaths.splice(ongoingPaths.indexOf(path), 1);
+          if (newPath.currentDay <= this.empireCountdown) {
+            if (possibleAction.toPlanet === objectivePlanet) {
+              validPaths.push(newPath);
+            } else {
+              newOngoingPaths.push(newPath);
+            }
+          }
         }
       }
+
+      ongoingPaths = newOngoingPaths;
+    }
+
+    // return valid path with lowest risked occurrence
+    if (validPaths.length > 0) {
+      const safestPath = validPaths.reduce((previousPath, currentPath) => {
+        return previousPath.nbRiskedOccurrence < currentPath.nbRiskedOccurrence ? previousPath : currentPath
+      });
+      return this.calculateProbabilityWithBounties(safestPath.nbRiskedOccurrence);
     }
 
     return 0;
+  }
+
+  private getPossibleActions(path: Path): Array<{ action: Action; toPlanet: Planet; fuelAfterAction: number; countDownAfterAction: number }> {
+    const possibleActions: Array<{ action: Action; toPlanet: Planet; fuelAfterAction: number; countDownAfterAction: number }> = [];
+
+    if (path.currentFuel === this.milleniumAutonomy) {
+      possibleActions.push({action: Action.Rest, toPlanet: path.currentPlanet, fuelAfterAction: path.currentFuel, countDownAfterAction: path.currentDay + 1});
+    } else {
+      possibleActions.push({
+        action: Action.Refuel,
+        toPlanet: path.currentPlanet,
+        fuelAfterAction: this.milleniumAutonomy,
+        countDownAfterAction: path.currentDay + 1,
+      });
+      possibleActions.push({action: Action.Rest, toPlanet: path.currentPlanet, fuelAfterAction: path.currentFuel, countDownAfterAction: path.currentDay + 1});
+    }
+
+    path.currentPlanet.children.forEach((child) => {
+      if (child.travelTime <= path.currentFuel) {
+        possibleActions.push({
+          action: Action.TravelToPlanet,
+          toPlanet: child.planet,
+          fuelAfterAction: path.currentFuel - child.travelTime,
+          countDownAfterAction: path.currentDay + child.travelTime,
+        })
+      }
+    });
+
+    return possibleActions;
+  }
+
+  private calculateProbabilityWithBounties(riskExposure: number): number {
+    if (riskExposure === 0) {
+      return 100;
+    }
+
+    let probability = 0
+
+    for (let i = 0; i < riskExposure; i++) {
+      probability += (9 ** i) / 10 ** (i + 1);
+    }
+
+    return (1 - probability) * 100;
   }
 }
 
