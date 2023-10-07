@@ -8,6 +8,8 @@ If you struggle to run the project, please let me know
 
 # Installation
 
+Please clone the project in your local. If you have a Linux environment, it will make it easier
+
 ## Requirement
 
 You need to have npm and node installed on your machine to run the project.
