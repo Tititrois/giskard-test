@@ -89,11 +89,9 @@ Each routes in the app.controller.ts are calling a service AppService.ts. They a
 
 All the logic in **src/algo** folder.
 
-I have tried to make the code as clean as possible using a simple class and some good data structure.
+I have tried to make the code as clean as possible using a simple class and some good data structure .
 
-- Calculator.structures
-
-It contains the main class needed for the algo:
+The file `src/algo/calculator.structures.ts` contains the main class needed for the algo:
 1. **Universe**: Contains the list of all planet in the system and a constructor to build the structure as a **Graph**. Each planet has a weighted vertice 
    to other planet we can reach.
 2. **Travel**: Contains all possible travel during the Algo, it keeps track of all actions done during the travel and the current planet we are on. We can 
@@ -101,7 +99,7 @@ It contains the main class needed for the algo:
 3. **Action**: Contains the potential action we can do next in the next travel. It helps us keep track of what we can do, and what are the impact (on 
    fuel, time, etc..) of the action
 
-The algo is using mainly these 3 components to do the logic. You can find all the logic in src/algo/probability.calculator.ts
+The algo is using mainly these 3 components to do the logic. You can find all the logic in `src/algo/probability.calculator.ts`
 **Look at the method: calculateProbability()**
 
 The concept of the algo is to try all travels and looping as long we have ongoing trip below the empire countdown. For each current travel, we try all 
