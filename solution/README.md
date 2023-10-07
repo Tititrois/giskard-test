@@ -3,8 +3,7 @@
 
 ## Requirement
 
--- You need to have npm and node installed on your machine.
-
+You need to have npm and node installed on your machine to run the project.
 
 ## Run backend
 
@@ -60,8 +59,30 @@ Replace path/to/millennium-falcon.json and path/to/empire.json with the paths to
 
 ## Run frontend
 
-TODO
+> Make sure you run the backend first, so the frontend can cal directly the backend
 
+1. Install the NestJS CLI globally by running the following command:
+
+   ```bash
+   npm install -g @angular/cli
+
+2. Navigate to the frontend folder:
+
+    ```bash
+    cd frontend
+
+3. Install the project dependencies:
+
+    ```bash
+    npm install
+
+
+4. Start the backend server in development mode:
+    ```bash
+    ng serve --open
+
+
+![img.png](img.png)
 
 # Implementation
 
