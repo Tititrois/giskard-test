@@ -36,6 +36,10 @@ You need to have npm and node installed on your machine to run the project.
     ```bash
     npm run start:dev
 
+5. (optional) Run test
+    ```bash
+    npm run test
+
 ## Run script
 
 > Note: Make sure you have the backend server running before running the script.
