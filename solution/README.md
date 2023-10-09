@@ -2,7 +2,7 @@
 
 It took me quite long, so I had not time to do some enhancement that could have been nice
 - A docker compose to run the project
-- Some tests iun the frontend
+- Some tests in the frontend
 
 If you struggle to run the project, please let me know
 
