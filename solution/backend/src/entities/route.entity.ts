@@ -11,8 +11,4 @@ export class Route extends BaseEntity {
 
   @Property()
   travel_time: number;
-
-  constructor() {
-    super();
-  }
 }
