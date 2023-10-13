@@ -3,10 +3,11 @@ import { MilleniumConfig } from "./configs/millenium.config";
 import { InjectRepository } from "@mikro-orm/nestjs";
 import { Route } from "./entities/route.entity";
 import { EntityRepository } from "@mikro-orm/sqlite";
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { EmpireConfig } from "./configs/empire.config";
 import { ProbabilityCalculator } from "./algo/probability.calculator";
 import { ConfigurationManager } from "./config.singleton";
+import * as fs from "fs";
 const sqlite3 = require('sqlite3');
 const { open } = require('sqlite');
 
@@ -36,6 +37,11 @@ export class AppService {
   }
 
   public async getRoutesFromAnotherDb(dbUrl: string): Promise<Array<Route>> {
+    // Check if the file at dbUrl exists before opening the database
+    if (!fs.existsSync(dbUrl)) {
+      throw new NotFoundException(`The database file at ${dbUrl} does not exist.`);
+    }
+
     const universeDb = await open({
       filename: dbUrl,
       driver: sqlite3.Database
